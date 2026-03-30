@@ -1,0 +1,28 @@
+node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# SQLite local data
+data/app.db
+data/app.db-shm
+data/app.db-wal
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build / coverage
+dist/
+build/
+coverage/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode-test/

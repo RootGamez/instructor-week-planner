@@ -1,0 +1,20 @@
+{
+  "name": "inst-schedule",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Registro de horario de capacitaciones con Node.js + SQLite",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "db:init": "node scripts/init-db.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "flatpickr": "^4.6.13",
+    "morgan": "^1.10.0",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Horario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/vendor/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="top-admin-controls" aria-label="Controles de administración">
+      <button id="adminAccessButton" class="admin-mini-button" title="Iniciar sesión admin" aria-label="Iniciar sesión admin">
+        <i class="fas fa-user-shield"></i>
+      </button>
+      <button id="adminPasswordButton" class="admin-mini-button hidden" title="Cambiar clave admin" aria-label="Cambiar clave admin">
+        <i class="fas fa-key"></i>
+      </button>
+      <button id="logoutButton" class="admin-mini-button hidden" title="Cerrar sesión admin" aria-label="Cerrar sesión admin">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+
+    <div class="card" id="exportContent">
+      <div class="header-content">
+        <img src="insignia v2.jpg" alt="Logo de la institución" class="logo" onerror="this.onerror=null; this.src='https://placehold.co/80x80/F1F5F9/334155?text=Logo';">
+        <h1>REGISTRO DE ASISTENCIA DE DOCENTES AL AIP-2025</h1>
+        <h2 id="subtitle">SEMANA DEL ...</h2>
+        <div class="quick-help">
+          <strong>Guía rápida:</strong> Haz clic en una celda libre para registrar. Si una celda está amarilla, otra persona la está editando. Solo admin puede limpiar, bloquear o editar registros existentes.
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="scheduleTable">
+          <thead>
+            <tr id="tableHeadRow"></tr>
+          </thead>
+          <tbody id="scheduleTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="globalMessageBox" class="message-box hidden"></div>
+
+    <div class="button-footer-container">
+      <button id="updateButton" class="update-button"><i class="fas fa-calendar-week"></i> Seleccionar Semana</button>
+      <button id="newWeekButton" class="new-week-button danger-action admin-only hidden"><i class="fas fa-trash-alt"></i> Limpiar Semana</button>
+      <button id="lockButton" class="lock-button danger-action admin-only hidden"><i class="fas fa-lock-open"></i> Bloquear Agenda</button>
+    </div>
+  </div>
+
+  <div id="registrationModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close-button" data-close="registrationModal">&times;</button>
+      <h2>REGISTRAR TU HORARIO</h2>
+      <div class="form-group">
+        <label for="docenteSelect">Nombre Docente:</label>
+        <select id="docenteSelect"></select>
+      </div>
+      <div class="form-group">
+        <label for="areaSelect">Area:</label>
+        <select id="areaSelect"></select>
+      </div>
+      <div class="form-group">
+        <label for="gradoSelect">Grado y Seccion:</label>
+        <select id="gradoSelect"></select>
+      </div>
+      <div class="button-group">
+        <button id="registerButton" class="register-button">Registrar</button>
+      </div>
+      <div id="messageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <div id="editModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close-button" data-close="editModal">&times;</button>
+      <h2>EDITAR HORARIO</h2>
+      <div class="button-group vertical">
+        <button id="editButton" class="edit-button">Editar Contenido</button>
+        <button id="deleteButton" class="red-delete-button">Eliminar Contenido</button>
+      </div>
+      <div id="editMessageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <div id="adminLoginModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close-button" data-close="adminLoginModal">&times;</button>
+      <h2>Ingreso Admin</h2>
+      <div class="form-group">
+        <label for="adminUserInput">Usuario:</label>
+        <input id="adminUserInput" type="text" value="admin">
+      </div>
+      <div class="form-group">
+        <label for="adminPassInput">Clave:</label>
+        <input id="adminPassInput" type="password" placeholder="Ingresa la clave">
+      </div>
+      <div class="button-group">
+        <button id="loginButton" class="register-button">Ingresar</button>
+      </div>
+      <div id="adminMessageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <div id="updateSubtitleModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close-button" data-close="updateSubtitleModal">&times;</button>
+      <h2>SELECCIONAR SEMANA</h2>
+      <div class="form-group">
+        <label for="weekPickerInput">Selecciona la semana:</label>
+        <input type="text" id="weekPickerInput" placeholder="Haz clic para elegir semana" readonly>
+      </div>
+      <div class="form-group">
+        <label>Semana elegida:</label>
+        <div id="selectedWeekPreview" class="selected-week-preview">Aun no seleccionada</div>
+      </div>
+      <div class="button-group">
+        <button id="updateSubtitleButton" class="register-button">Actualizar Semana</button>
+      </div>
+      <div id="updateSubtitleMessageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <div id="changePasswordModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close-button" data-close="changePasswordModal">&times;</button>
+      <h2>CAMBIAR CLAVE ADMIN</h2>
+      <div class="form-group">
+        <label for="currentPasswordInput">Clave actual:</label>
+        <input type="password" id="currentPasswordInput" placeholder="Ingresa clave actual">
+      </div>
+      <div class="form-group">
+        <label for="newPasswordInput">Nueva clave:</label>
+        <input type="password" id="newPasswordInput" placeholder="Minimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label for="confirmPasswordInput">Confirmar nueva clave:</label>
+        <input type="password" id="confirmPasswordInput" placeholder="Repite nueva clave">
+      </div>
+      <div class="button-group">
+        <button id="changePasswordConfirmButton" class="register-button">Guardar Nueva Clave</button>
+      </div>
+      <div id="changePasswordMessageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <script src="/vendor/flatpickr/dist/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr/dist/l10n/es.js"></script>
+  <script src="/vendor/flatpickr/dist/plugins/weekSelect/weekSelect.js"></script>
+  <script type="module" src="app/main.js"></script>
+</body>
+</html>
