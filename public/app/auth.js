@@ -53,10 +53,23 @@ export async function handleAdminLogin() {
 }
 
 export function handleAdminLogout() {
-  state.adminToken = null;
-  localStorage.removeItem("adminToken");
-  syncAdminUi();
-  showGlobalMessage("Sesion admin cerrada.", "success");
+  const tokenToLogout = state.adminToken;
+
+  const clearLocalSession = () => {
+    state.adminToken = null;
+    localStorage.removeItem("adminToken");
+    syncAdminUi();
+    showGlobalMessage("Sesion admin cerrada.", "success");
+  };
+
+  if (!tokenToLogout) {
+    clearLocalSession();
+    return;
+  }
+
+  api("/auth/logout", { method: "POST" })
+    .catch(() => {})
+    .finally(clearLocalSession);
 }
 
 export function openChangePasswordModal() {

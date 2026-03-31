@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { DatabaseSync } = require("node:sqlite");
+const bcrypt = require("bcryptjs");
 
 const envPath = path.join(process.cwd(), ".env");
 if (fs.existsSync(envPath)) {
@@ -9,6 +10,7 @@ if (fs.existsSync(envPath)) {
 
 const dbPath = process.env.DB_PATH || "./data/app.db";
 const adminPassword = process.env.ADMIN_PASSWORD || "admin_password";
+const adminPasswordHash = bcrypt.hashSync(adminPassword, 12);
 const seedPath = path.join(process.cwd(), "data", "seed-data.json");
 const seed = JSON.parse(fs.readFileSync(seedPath, "utf8"));
 
@@ -31,6 +33,23 @@ CREATE TABLE IF NOT EXISTS admin_users (
   username TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS admin_sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  token_hash TEXT NOT NULL UNIQUE,
+  user_id INTEGER NOT NULL,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  revoked_at TEXT,
+  last_seen_at TEXT,
+  FOREIGN KEY(user_id) REFERENCES admin_users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_sessions_user_id
+  ON admin_sessions(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_admin_sessions_expires_at
+  ON admin_sessions(expires_at);
 
 CREATE TABLE IF NOT EXISTS teachers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -83,11 +102,10 @@ const upsertSetting = db.prepare(`
 upsertSetting.run("current_week_label", seed.defaultWeekLabel);
 upsertSetting.run("is_schedule_locked", "0");
 
-const upsertAdmin = db.prepare(`
-  INSERT INTO admin_users(username, password) VALUES(?, ?)
-  ON CONFLICT(username) DO UPDATE SET password = excluded.password
-`);
-upsertAdmin.run("admin", adminPassword);
+const insertAdminIfMissing = db.prepare(
+  "INSERT OR IGNORE INTO admin_users(username, password) VALUES(?, ?)"
+);
+insertAdminIfMissing.run("admin", adminPasswordHash);
 
 const insertTeacher = db.prepare("INSERT OR IGNORE INTO teachers(name) VALUES(?)");
 const insertArea = db.prepare("INSERT OR IGNORE INTO areas(name) VALUES(?)");

@@ -1,6 +1,6 @@
 const express = require("express");
 const db = require("../db/connection");
-const { login, requireAdmin, changePassword } = require("../auth");
+const { login, requireAdmin, logoutToken, changePassword } = require("../auth");
 const { notifyScheduleChanged } = require("../realtime/hub");
 
 const router = express.Router();
@@ -80,6 +80,16 @@ function getSchedule(weekLabel) {
 
 router.post("/auth/login", (req, res) => {
   const { username, password } = req.body || {};
+
+  if (
+    typeof username !== "string" ||
+    !username.trim() ||
+    typeof password !== "string" ||
+    !password
+  ) {
+    return res.status(400).json({ error: "Debes enviar usuario y clave" });
+  }
+
   const token = login(username, password);
 
   if (!token) {
@@ -87,6 +97,11 @@ router.post("/auth/login", (req, res) => {
   }
 
   res.json({ token });
+});
+
+router.post("/auth/logout", requireAdmin, (req, res) => {
+  logoutToken(req.authToken);
+  res.json({ ok: true });
 });
 
 router.patch("/auth/password", requireAdmin, (req, res) => {
