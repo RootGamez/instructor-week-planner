@@ -1,0 +1,14 @@
+node_modules
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+data/app.db
+data/app.db-shm
+data/app.db-wal
+coverage
+dist
+build
+npm-debug.log*
+pnpm-debug.log*

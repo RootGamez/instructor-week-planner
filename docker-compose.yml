@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_PATH: /app/data/app.db
+      SESSION_TTL_HOURS: 12
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      CORS_ORIGIN: https://rootgamez.dev,https://www.rootgamez.dev
+    volumes:
+      - app_data:/app/data
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2.9-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  app_data:
+  caddy_data:
+  caddy_config:
