@@ -22,7 +22,7 @@ services:
     depends_on:
       - app
     ports:
-      - "80:80"
+      - "3005:80"
       - "443:443"
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
