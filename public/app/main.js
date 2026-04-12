@@ -17,6 +17,7 @@ import {
 import { connectWebSocket, configureRealtime, releaseCurrentEditingLock } from "./realtime.js";
 import { handleUpdateClick, handleUpdateSubtitle, initWeekPicker } from "./weekPicker.js";
 import { handleLockClick, handleNewWeekClick } from "./adminActions.js";
+import { openCatalogManager, wireCatalogManager } from "./catalogAdmin.js";
 
 function wireEvents() {
   document.querySelectorAll("[data-close]").forEach((button) => {
@@ -41,12 +42,14 @@ function wireEvents() {
   document.getElementById("updateSubtitleButton")?.addEventListener("click", () => handleUpdateSubtitle(loadBootstrap));
   document.getElementById("newWeekButton")?.addEventListener("click", () => handleNewWeekClick(loadBootstrap));
   document.getElementById("lockButton")?.addEventListener("click", () => handleLockClick(loadBootstrap));
+  document.getElementById("manageDataButton")?.addEventListener("click", () => openCatalogManager(loadBootstrap));
 }
 
 (async function init() {
   configureRealtime({ renderTable, loadBootstrap });
   connectWebSocket();
   wireEvents();
+  wireCatalogManager();
   initWeekPicker();
   syncAdminUi();
 

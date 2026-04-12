@@ -6,25 +6,6 @@ const { sessionTtlHours } = require("./config");
 const HASH_ROUNDS = 12;
 const BCRYPT_HASH_RE = /^\$2[aby]\$\d\d\$/;
 
-db.exec(`
-CREATE TABLE IF NOT EXISTS admin_sessions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  token_hash TEXT NOT NULL UNIQUE,
-  user_id INTEGER NOT NULL,
-  created_at TEXT NOT NULL,
-  expires_at TEXT NOT NULL,
-  revoked_at TEXT,
-  last_seen_at TEXT,
-  FOREIGN KEY(user_id) REFERENCES admin_users(id) ON DELETE CASCADE
-);
-
-CREATE INDEX IF NOT EXISTS idx_admin_sessions_user_id
-  ON admin_sessions(user_id);
-
-CREATE INDEX IF NOT EXISTS idx_admin_sessions_expires_at
-  ON admin_sessions(expires_at);
-`);
-
 function hashToken(token) {
   return crypto.createHash("sha256").update(token).digest("hex");
 }

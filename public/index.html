@@ -31,7 +31,7 @@
         <h1>REGISTRO DE ASISTENCIA DE DOCENTES AL AIP-2025</h1>
         <h2 id="subtitle">SEMANA DEL ...</h2>
         <div class="quick-help">
-          <strong>Guía rápida:</strong> Haz clic en una celda libre para registrar. Si una celda está amarilla, otra persona la está editando. Solo admin puede limpiar, bloquear o editar registros existentes.
+          <strong>Guía rápida:</strong> Haz clic en una celda libre para registrar. Si una celda está amarilla, otra persona la está editando. Solo admin puede limpiar, bloquear o editar registros existentes y mantener profesores, aulas y grados.
         </div>
       </div>
 
@@ -49,6 +49,7 @@
 
     <div class="button-footer-container">
       <button id="updateButton" class="update-button"><i class="fas fa-calendar-week"></i> Seleccionar Semana</button>
+      <button id="manageDataButton" class="manage-data-button admin-only hidden"><i class="fas fa-database"></i> Gestionar Datos</button>
       <button id="newWeekButton" class="new-week-button danger-action admin-only hidden"><i class="fas fa-trash-alt"></i> Limpiar Semana</button>
       <button id="lockButton" class="lock-button danger-action admin-only hidden"><i class="fas fa-lock-open"></i> Bloquear Agenda</button>
     </div>
@@ -147,6 +148,33 @@
         <button id="changePasswordConfirmButton" class="register-button">Guardar Nueva Clave</button>
       </div>
       <div id="changePasswordMessageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <div id="catalogManagerModal" class="modal-overlay hidden">
+    <div class="modal-content catalog-modal">
+      <button class="modal-close-button" data-close="catalogManagerModal">&times;</button>
+      <h2 id="catalogManagerTitle">GESTION DE DATOS</h2>
+      <div class="catalog-tabs">
+        <button type="button" class="catalog-tab active" data-catalog-resource="teachers">Profesores</button>
+        <button type="button" class="catalog-tab" data-catalog-resource="areas">Aulas</button>
+        <button type="button" class="catalog-tab" data-catalog-resource="grades">Grados</button>
+        <button type="button" class="catalog-tab" data-catalog-resource="slots">Bloqueos</button>
+      </div>
+      <div id="catalogManagerHint" class="catalog-hint">Selecciona un recurso para comenzar.</div>
+      <div id="catalogManagerList" class="catalog-list"></div>
+      <div id="catalogManagerForm" class="catalog-form">
+        <div class="form-group">
+          <label for="catalogManagerNameInput">Nombre:</label>
+          <input id="catalogManagerNameInput" type="text" placeholder="Nombre">
+        </div>
+        <div class="button-group">
+          <button id="catalogManagerSaveButton" class="register-button">Guardar</button>
+          <button id="catalogManagerDeleteButton" class="red-delete-button">Eliminar</button>
+          <button id="catalogManagerCancelButton" class="update-button" type="button">Limpiar</button>
+        </div>
+      </div>
+      <div id="catalogManagerMessageBox" class="message-box"></div>
     </div>
   </div>
 

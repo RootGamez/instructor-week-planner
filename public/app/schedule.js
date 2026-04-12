@@ -63,8 +63,8 @@ export function renderTable() {
       const td = document.createElement("td");
       td.dataset.slotId = String(slot.id);
 
-      if (slot.isPermanentBlocked) {
-        td.classList.add("permanent-block-cell");
+      if (state.weekBlockedSlotIds.has(slot.id)) {
+        td.classList.add("admin-block-cell");
       } else if (
         state.realtimeLockedSlotIds.has(slot.id) &&
         state.ownedEditingSlotId !== slot.id
@@ -101,6 +101,7 @@ export async function loadBootstrap(weekLabel) {
   state.areas = data.areas;
   state.grades = data.grades;
   state.slots = data.slots;
+  state.weekBlockedSlotIds = new Set(data.blockedSlotIds || []);
   state.entriesBySlotId = {};
   for (const entry of data.entries) {
     state.entriesBySlotId[entry.slotId] = entry;
@@ -130,7 +131,7 @@ function openRegistration(slotId, current) {
 
 export async function handleCellClick(slotId) {
   const slot = state.slots.find((item) => item.id === slotId);
-  if (!slot || slot.isPermanentBlocked) return;
+  if (!slot || state.weekBlockedSlotIds.has(slotId)) return;
 
   if (state.realtimeLockedSlotIds.has(slotId) && state.ownedEditingSlotId !== slotId) {
     showGlobalMessage("Este horario esta siendo editado por otro usuario.", "error");

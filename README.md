@@ -139,7 +139,9 @@ Haz backup periodico de ese volumen.
 - Cualquier usuario puede reservar un slot vacio si la semana no esta bloqueada.
 - Concurrencia protegida en backend (transaccion + restriccion unica por slot/semana).
 - Bloqueo general de agenda por admin.
-- Slots permanentemente bloqueados definidos en semilla.
+- Los bloqueos manuales se guardan por semana activa y no se arrastran a semanas siguientes.
+- CRUD de profesores, aulas y grados desde la interfaz admin.
+- Bloqueo manual de franjas horarias por admin, con liberacion de reservas de esa semana.
 
 ## Seguridad de autenticacion
 
