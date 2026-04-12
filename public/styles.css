@@ -224,7 +224,8 @@ td.permanent-block-cell {
 td.admin-block-cell {
   background: #4b5563;
   color: white;
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .button-footer-container {
@@ -261,6 +262,7 @@ button:disabled {
 .register-button { background: var(--success); }
 .edit-button { background: #2563eb; }
 .red-delete-button { background: var(--danger); }
+.admin-block-button { background: #6d28d9; }
 
 .danger-action {
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45);

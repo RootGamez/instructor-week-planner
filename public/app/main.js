@@ -10,6 +10,7 @@ import {
 import {
   handleDeleteContent,
   handleEditContent,
+  handleBlockCurrentSlot,
   handleRegister,
   loadBootstrap,
   renderTable
@@ -38,6 +39,8 @@ function wireEvents() {
   });
 
   document.getElementById("registerButton")?.addEventListener("click", handleRegister);
+  document.getElementById("blockSlotButton")?.addEventListener("click", handleBlockCurrentSlot);
+  document.getElementById("editBlockSlotButton")?.addEventListener("click", handleBlockCurrentSlot);
   document.getElementById("editButton")?.addEventListener("click", handleEditContent);
   document.getElementById("deleteButton")?.addEventListener("click", handleDeleteContent);
   document.getElementById("loginButton")?.addEventListener("click", handleAdminLogin);

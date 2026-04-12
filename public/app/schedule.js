@@ -1,7 +1,9 @@
 import { state, ui } from "./state.js";
 import { api } from "./api.js";
 import {
+  closeModal,
   openModal,
+  openConfirmModal,
   setSelectOptions,
   showGlobalMessage,
   showMessage,
@@ -17,6 +19,20 @@ function normalizeToWeekStart(date) {
   const day = (baseDate.getDay() + 6) % 7;
   baseDate.setDate(baseDate.getDate() - day);
   return baseDate;
+}
+
+function setBlockButtonVisibility(modalId) {
+  const isAdmin = Boolean(state.adminToken);
+  const showRegistrationButton = modalId === "registrationModal" && isAdmin;
+  const showEditButton = modalId === "editModal" && isAdmin;
+
+  if (ui.blockSlotButton) {
+    ui.blockSlotButton.classList.toggle("hidden", !showRegistrationButton);
+  }
+
+  if (ui.editBlockSlotButton) {
+    ui.editBlockSlotButton.classList.toggle("hidden", !showEditButton);
+  }
 }
 
 export function syncLockButtonIcon() {
@@ -136,6 +152,7 @@ export async function loadBootstrap(weekLabel, weekDate) {
 
 function openRegistration(slotId, current) {
   state.selectedSlotId = slotId;
+  setBlockButtonVisibility("registrationModal");
 
   if (current) {
     ui.docenteSelect.value = String(current.teacherId);
@@ -150,9 +167,50 @@ function openRegistration(slotId, current) {
   openModal("registrationModal");
 }
 
+async function toggleSlotBlock(slotId, isBlocked) {
+  const slot = state.slots.find((item) => item.id === slotId);
+  if (!slot) return;
+
+  try {
+    await api(withWeekQuery(`/slots/${slotId}/block`, state.activeWeekLabel), {
+      method: "PATCH",
+      body: JSON.stringify({ isBlocked })
+    });
+    await loadBootstrap(state.activeWeekLabel, state.activeWeekDate);
+    releaseCurrentEditingLock();
+    closeModal("registrationModal");
+    closeModal("editModal");
+    showGlobalMessage(
+      isBlocked ? "Hora bloqueada correctamente." : "Hora desbloqueada correctamente.",
+      "success"
+    );
+  } catch (error) {
+    showGlobalMessage(error.message, "error");
+  }
+}
+
 export async function handleCellClick(slotId) {
   const slot = state.slots.find((item) => item.id === slotId);
-  if (!slot || state.weekBlockedSlotIds.has(slotId)) return;
+  if (!slot) return;
+
+  if (state.weekBlockedSlotIds.has(slotId)) {
+    if (!state.adminToken) {
+      showGlobalMessage("Esta hora esta bloqueada.", "error");
+      return;
+    }
+
+    const confirmed = await openConfirmModal({
+      title: "Hora bloqueada",
+      message: "Esta hora esta bloqueada. Quieres desbloquearla?",
+      confirmText: "Desbloquear",
+      cancelText: "Cancelar"
+    });
+
+    if (!confirmed) return;
+
+    await toggleSlotBlock(slotId, false);
+    return;
+  }
 
   if (state.realtimeLockedSlotIds.has(slotId) && state.ownedEditingSlotId !== slotId) {
     showGlobalMessage("Este horario esta siendo editado por otro usuario.", "error");
@@ -175,6 +233,7 @@ export async function handleCellClick(slotId) {
     if (!lockOk) return;
 
     state.selectedSlotId = slotId;
+    setBlockButtonVisibility("editModal");
     openModal("editModal");
     renderTable();
     return;
@@ -185,6 +244,14 @@ export async function handleCellClick(slotId) {
 
   openRegistration(slotId, null);
   renderTable();
+}
+
+export async function handleBlockCurrentSlot() {
+  if (!ensureAdmin()) return;
+
+  if (!state.selectedSlotId) return;
+
+  await toggleSlotBlock(state.selectedSlotId, true);
 }
 
 export async function handleRegister() {

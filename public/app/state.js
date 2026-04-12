@@ -34,6 +34,8 @@ export const ui = {
   docenteSelect: document.getElementById("docenteSelect"),
   areaSelect: document.getElementById("areaSelect"),
   gradoSelect: document.getElementById("gradoSelect"),
+  blockSlotButton: document.getElementById("blockSlotButton"),
+  editBlockSlotButton: document.getElementById("editBlockSlotButton"),
   weekPickerInput: document.getElementById("weekPickerInput"),
   selectedWeekPreview: document.getElementById("selectedWeekPreview"),
   currentPasswordInput: document.getElementById("currentPasswordInput"),

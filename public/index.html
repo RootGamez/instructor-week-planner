@@ -98,6 +98,7 @@
       </div>
       <div class="button-group">
         <button id="registerButton" class="register-button">Registrar</button>
+        <button id="blockSlotButton" class="update-button admin-only hidden" type="button">Bloquear Hora</button>
       </div>
       <div id="messageBox" class="message-box"></div>
     </div>
@@ -110,6 +111,7 @@
       <div class="button-group vertical">
         <button id="editButton" class="edit-button">Editar Contenido</button>
         <button id="deleteButton" class="red-delete-button">Eliminar Contenido</button>
+        <button id="editBlockSlotButton" class="update-button admin-only hidden" type="button">Bloquear Hora</button>
       </div>
       <div id="editMessageBox" class="message-box"></div>
     </div>
@@ -195,7 +197,6 @@
         <button type="button" class="catalog-tab active" data-catalog-resource="teachers">Profesores</button>
         <button type="button" class="catalog-tab" data-catalog-resource="areas">Aulas</button>
         <button type="button" class="catalog-tab" data-catalog-resource="grades">Grados</button>
-        <button type="button" class="catalog-tab" data-catalog-resource="slots">Bloqueos</button>
       </div>
       <div id="catalogManagerHint" class="catalog-hint">Selecciona un recurso para comenzar.</div>
       <div id="catalogManagerList" class="catalog-list"></div>

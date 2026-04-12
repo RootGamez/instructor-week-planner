@@ -18,10 +18,6 @@ const CATALOGS = {
     title: "Grados",
     label: "grado",
     placeholder: "Nombre del grado"
-  },
-  slots: {
-    title: "Bloqueos de horario",
-    label: "slot"
   }
 };
 
@@ -47,7 +43,6 @@ function getResourceItems(resource) {
   if (resource === "teachers") return state.teachers;
   if (resource === "areas") return state.areas;
   if (resource === "grades") return state.grades;
-  if (resource === "slots") return state.slots;
   return [];
 }
 
@@ -66,33 +61,6 @@ function renderCatalogManager() {
   elements.tabs.forEach((button) => {
     button.classList.toggle("active", button.dataset.catalogResource === activeResource);
   });
-
-  if (activeResource === "slots") {
-    if (elements.form) elements.form.classList.add("hidden");
-    if (elements.hint) {
-      elements.hint.textContent = "Los bloqueos se guardan por semana activa. Al cambiar de semana, no se arrastran.";
-    }
-    if (elements.list) {
-      elements.list.innerHTML = getResourceItems("slots")
-        .map((slot) => {
-          const blocked = state.weekBlockedSlotIds.has(slot.id);
-          const status = blocked ? "Bloqueado en esta semana" : "Disponible";
-          const actionLabel = blocked ? "Desbloquear" : "Bloquear";
-
-          return `
-            <div class="catalog-row ${blocked ? "blocked" : ""}">
-              <div class="catalog-row-main">
-                <strong>${escapeHtml(slot.dayLabel)} - ${escapeHtml(slot.timeRange)}</strong>
-                <span>${escapeHtml(status)}</span>
-              </div>
-              <button class="catalog-row-action" data-slot-toggle="${slot.id}" data-slot-blocked="${blocked ? "1" : "0"}">${actionLabel}</button>
-            </div>
-          `;
-        })
-        .join("");
-    }
-    return;
-  }
 
   if (elements.form) elements.form.classList.remove("hidden");
   if (elements.hint) {
@@ -149,34 +117,15 @@ export function wireCatalogManager() {
 
   elements.list?.addEventListener("click", async (event) => {
     const catalogButton = event.target.closest("[data-catalog-id]");
-    const toggleButton = event.target.closest("[data-slot-toggle]");
 
     if (catalogButton) {
       selectedItemId = Number(catalogButton.dataset.catalogId);
       renderCatalogManager();
       return;
     }
-
-    if (toggleButton) {
-      if (!ensureAdmin()) return;
-      const slotId = Number(toggleButton.dataset.slotToggle);
-      const isBlocked = toggleButton.dataset.slotBlocked === "1";
-
-      try {
-        await api(`/slots/${slotId}/block`, {
-          method: "PATCH",
-          body: JSON.stringify({ isBlocked: !isBlocked, weekLabel: state.activeWeekLabel })
-        });
-        await refreshData();
-        showMessage("catalogManagerMessageBox", isBlocked ? "Slot desbloqueado en esta semana." : "Slot bloqueado en esta semana.", "success");
-      } catch (error) {
-        showMessage("catalogManagerMessageBox", error.message, "error");
-      }
-    }
   });
 
   elements.saveButton?.addEventListener("click", async () => {
-    if (activeResource === "slots") return;
     if (!ensureAdmin()) return;
 
     const name = elements.input ? elements.input.value.trim() : "";
@@ -205,7 +154,7 @@ export function wireCatalogManager() {
   });
 
   elements.deleteButton?.addEventListener("click", async () => {
-    if (activeResource === "slots" || !selectedItemId) return;
+    if (!selectedItemId) return;
     if (!ensureAdmin()) return;
 
     const meta = getResourceMeta(activeResource);
