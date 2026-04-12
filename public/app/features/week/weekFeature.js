@@ -1,5 +1,5 @@
-import { state, ui } from "./state.js";
-import { openConfirmModal, showMessage } from "./dom.js";
+import { state, ui } from "../../core/state.js";
+import { openConfirmModal, showMessage } from "../../ui/dom.js";
 
 const MONTHS_ES = [
   "ENERO",

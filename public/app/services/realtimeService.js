@@ -1,5 +1,5 @@
-import { state } from "./state.js";
-import { showGlobalMessage } from "./dom.js";
+import { state } from "../core/state.js";
+import { showGlobalMessage } from "../ui/dom.js";
 
 let renderTableFn = () => {};
 let loadBootstrapFn = async () => {};

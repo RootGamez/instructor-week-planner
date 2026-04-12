@@ -1,5 +1,5 @@
-import { state, ui } from "./state.js";
-import { api } from "./api.js";
+import { state, ui } from "../../core/state.js";
+import { api } from "../../services/apiClient.js";
 import {
   closeModal,
   openModal,
@@ -8,10 +8,10 @@ import {
   showGlobalMessage,
   showMessage,
   withWeekQuery
-} from "./dom.js";
-import { ensureAdmin } from "./auth.js";
-import { requestSlotLock, releaseCurrentEditingLock } from "./realtime.js";
-import { resolveWeekDateFromLabel } from "./weekPicker.js";
+} from "../../ui/dom.js";
+import { ensureAdmin } from "../auth/authFeature.js";
+import { requestSlotLock, releaseCurrentEditingLock } from "../../services/realtimeService.js";
+import { resolveWeekDateFromLabel } from "../week/weekFeature.js";
 
 function normalizeToWeekStart(date) {
   const baseDate = new Date(date);

@@ -1,6 +1,6 @@
-import { state, ui } from "./state.js";
-import { api } from "./api.js";
-import { openModal, showGlobalMessage, showMessage } from "./dom.js";
+import { state, ui } from "../../core/state.js";
+import { api } from "../../services/apiClient.js";
+import { openModal, showGlobalMessage, showMessage } from "../../ui/dom.js";
 
 export function ensureAdmin() {
   if (state.adminToken) return true;

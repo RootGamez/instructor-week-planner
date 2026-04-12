@@ -1,7 +1,7 @@
-import { state } from "./state.js";
-import { api } from "./api.js";
-import { ensureAdmin } from "./auth.js";
-import { showGlobalMessage } from "./dom.js";
+import { state } from "../../core/state.js";
+import { api } from "../../services/apiClient.js";
+import { ensureAdmin } from "../auth/authFeature.js";
+import { showGlobalMessage } from "../../ui/dom.js";
 
 export async function handleNewWeekClick(loadBootstrap) {
   if (!ensureAdmin()) return;

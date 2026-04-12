@@ -1,4 +1,4 @@
-import { ui } from "./state.js";
+import { ui } from "../core/state.js";
 
 export function showMessage(elementId, message, type) {
   const element = document.getElementById(elementId);

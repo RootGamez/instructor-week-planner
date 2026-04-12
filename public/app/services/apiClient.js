@@ -1,4 +1,4 @@
-import { state } from "./state.js";
+import { state } from "../core/state.js";
 
 export async function api(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
