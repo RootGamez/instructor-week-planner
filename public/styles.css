@@ -284,6 +284,63 @@ button:disabled {
   position: relative;
 }
 
+.flatpickr-calendar {
+  font-family: inherit;
+  max-width: calc(100vw - 16px);
+}
+
+.flatpickr-calendar .flatpickr-months {
+  align-items: center;
+}
+
+.flatpickr-calendar .flatpickr-month {
+  height: auto;
+  min-height: 44px;
+}
+
+.flatpickr-calendar .flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month .cur-month {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.flatpickr-calendar .flatpickr-current-month {
+  width: calc(100% - 96px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.flatpickr-calendar .flatpickr-current-month .numInputWrapper,
+.flatpickr-calendar .flatpickr-current-month .flatpickr-monthDropdown-months {
+  flex: 0 0 auto;
+}
+
+.flatpickr-calendar .flatpickr-current-month .numInputWrapper {
+  width: 88px;
+}
+
+.flatpickr-calendar .flatpickr-current-month .numInputWrapper input {
+  font-weight: 700;
+}
+
+.flatpickr-calendar .flatpickr-prev-month,
+.flatpickr-calendar .flatpickr-next-month {
+  top: 6px;
+  height: 32px;
+  width: 32px;
+}
+
+.flatpickr-calendar .flatpickr-prev-month svg,
+.flatpickr-calendar .flatpickr-next-month svg {
+  width: 14px;
+  height: 14px;
+}
+
 .confirm-overlay {
   background: rgba(15, 23, 42, 0.68);
 }
@@ -604,6 +661,18 @@ select {
     overflow-y: auto;
     border-radius: 16px 16px 0 0;
     padding: 14px;
+  }
+
+  .flatpickr-calendar.open,
+  .flatpickr-calendar.arrowTop,
+  .flatpickr-calendar.arrowBottom {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+  }
+
+  .flatpickr-calendar {
+    width: min(92vw, 340px) !important;
   }
 
   .button-group {
