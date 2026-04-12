@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -10,6 +11,14 @@ const apiRouter = require("./routes/api");
 const { setupSlotLocks } = require("./realtime/slotLocks");
 
 const app = express();
+const publicDir = path.join(process.cwd(), "public");
+const indexPath = path.join(publicDir, "index.html");
+const assetVersion = process.env.ASSET_VERSION || String(Date.now());
+const indexTemplate = fs.readFileSync(indexPath, "utf8");
+
+function renderIndex() {
+  return indexTemplate.replaceAll("__ASSET_VERSION__", assetVersion);
+}
 
 const allowAnyCors = corsOrigins.includes("*");
 
@@ -54,7 +63,21 @@ app.use(morgan("dev"));
 
 app.use("/api/auth/login", loginLimiter);
 app.use("/api", apiLimiter, apiRouter);
-app.use(express.static(path.join(process.cwd(), "public")));
+
+app.get(["/", "/index.html"], (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  res.type("html").send(renderIndex());
+});
+
+app.use(
+  express.static(publicDir, {
+    index: false,
+    maxAge: "1y",
+    immutable: true
+  })
+);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });
