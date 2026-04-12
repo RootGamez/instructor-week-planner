@@ -9,6 +9,7 @@ import {
 } from "./dom.js";
 import { ensureAdmin } from "./auth.js";
 import { requestSlotLock, releaseCurrentEditingLock } from "./realtime.js";
+import { resolveWeekDateFromLabel } from "./weekPicker.js";
 
 export function syncLockButtonIcon() {
   const lockIcon = document.querySelector("#lockButton i");
@@ -39,9 +40,18 @@ export function renderTable() {
   const hourTh = document.createElement("th");
   hourTh.textContent = "HORA";
   ui.tableHeadRow.appendChild(hourTh);
+
+  const mondayDate = state.activeWeekDate instanceof Date && !Number.isNaN(state.activeWeekDate.getTime())
+    ? new Date(state.activeWeekDate)
+    : new Date();
+  mondayDate.setHours(12, 0, 0, 0);
+
   for (const day of uniqueDays) {
     const th = document.createElement("th");
-    th.textContent = day.dayLabel;
+    const dayDate = new Date(mondayDate);
+    dayDate.setDate(mondayDate.getDate() + day.colOrder);
+    const dateLabel = String(dayDate.getDate()).padStart(2, "0");
+    th.textContent = `${day.dayLabel} ${dateLabel}`;
     ui.tableHeadRow.appendChild(th);
   }
 
@@ -90,12 +100,13 @@ export function renderTable() {
   syncLockButtonIcon();
 }
 
-export async function loadBootstrap(weekLabel) {
+export async function loadBootstrap(weekLabel, weekDate) {
   const path = withWeekQuery("/bootstrap", weekLabel);
   const data = await api(path, { method: "GET" });
 
   state.weekLabel = data.weekLabel;
   state.activeWeekLabel = data.weekLabel;
+  state.activeWeekDate = weekDate || resolveWeekDateFromLabel(data.weekLabel) || new Date();
   state.isLocked = data.isLocked;
   state.teachers = data.teachers;
   state.areas = data.areas;

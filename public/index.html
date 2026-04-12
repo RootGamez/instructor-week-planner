@@ -29,9 +29,25 @@
       <div class="header-content">
         <img src="insignia v2.jpg" alt="Logo de la institución" class="logo" onerror="this.onerror=null; this.src='https://placehold.co/80x80/F1F5F9/334155?text=Logo';">
         <h1>REGISTRO DE ASISTENCIA DE DOCENTES AL AIP-2025</h1>
-        <h2 id="subtitle">SEMANA DEL ...</h2>
+        <div class="week-nav-bar" aria-label="Navegación de semanas">
+          <button id="previousWeekButton" class="week-nav-button" type="button" aria-label="Semana anterior">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="week-title-wrap">
+            <h2 id="subtitle">SEMANA DEL ...</h2>
+            <div class="week-hint">Usa los botones para mover una semana. El selector es para saltos largos.</div>
+          </div>
+          <button id="nextWeekButton" class="week-nav-button" type="button" aria-label="Semana siguiente">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
         <div class="quick-help">
           <strong>Guía rápida:</strong> Haz clic en una celda libre para registrar. Si una celda está amarilla, otra persona la está editando. Solo admin puede limpiar, bloquear o editar registros existentes y mantener profesores, aulas y grados.
+        </div>
+        <div class="week-quick-actions">
+          <button id="currentWeekButton" class="current-week-button" type="button">
+            <i class="fas fa-bolt"></i> Semana actual
+          </button>
         </div>
       </div>
 
@@ -114,7 +130,7 @@
       <button class="modal-close-button" data-close="updateSubtitleModal">&times;</button>
       <h2>SELECCIONAR SEMANA</h2>
       <div class="form-group">
-        <label for="weekPickerInput">Selecciona la semana:</label>
+        <label for="weekPickerInput">Selecciona una semana distante:</label>
         <input type="text" id="weekPickerInput" placeholder="Haz clic para elegir semana" readonly>
       </div>
       <div class="form-group">
@@ -148,6 +164,17 @@
         <button id="changePasswordConfirmButton" class="register-button">Guardar Nueva Clave</button>
       </div>
       <div id="changePasswordMessageBox" class="message-box"></div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal-overlay hidden confirm-overlay">
+    <div class="modal-content confirm-modal">
+      <h2 id="confirmModalTitle">Confirmar acción</h2>
+      <p id="confirmModalMessage" class="confirm-message">¿Deseas continuar?</p>
+      <div class="confirm-actions">
+        <button id="confirmModalCancelButton" class="update-button confirm-cancel-button" type="button">Cancelar</button>
+        <button id="confirmModalAcceptButton" class="register-button confirm-accept-button" type="button">Aceptar</button>
+      </div>
     </div>
   </div>
 

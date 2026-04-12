@@ -15,7 +15,14 @@ import {
   renderTable
 } from "./schedule.js";
 import { connectWebSocket, configureRealtime, releaseCurrentEditingLock } from "./realtime.js";
-import { handleUpdateClick, handleUpdateSubtitle, initWeekPicker } from "./weekPicker.js";
+import {
+  handleCurrentWeek,
+  handleNextWeek,
+  handlePreviousWeek,
+  handleUpdateClick,
+  handleUpdateSubtitle,
+  initWeekPicker
+} from "./weekPicker.js";
 import { handleLockClick, handleNewWeekClick } from "./adminActions.js";
 import { openCatalogManager, wireCatalogManager } from "./catalogAdmin.js";
 
@@ -39,10 +46,13 @@ function wireEvents() {
   document.getElementById("logoutButton")?.addEventListener("click", handleAdminLogout);
   document.getElementById("changePasswordConfirmButton")?.addEventListener("click", handleChangePassword);
   document.getElementById("updateButton")?.addEventListener("click", handleUpdateClick);
+  document.getElementById("currentWeekButton")?.addEventListener("click", () => handleCurrentWeek(loadBootstrap));
   document.getElementById("updateSubtitleButton")?.addEventListener("click", () => handleUpdateSubtitle(loadBootstrap));
   document.getElementById("newWeekButton")?.addEventListener("click", () => handleNewWeekClick(loadBootstrap));
   document.getElementById("lockButton")?.addEventListener("click", () => handleLockClick(loadBootstrap));
   document.getElementById("manageDataButton")?.addEventListener("click", () => openCatalogManager(loadBootstrap));
+  document.getElementById("previousWeekButton")?.addEventListener("click", () => handlePreviousWeek(loadBootstrap));
+  document.getElementById("nextWeekButton")?.addEventListener("click", () => handleNextWeek(loadBootstrap));
 }
 
 (async function init() {

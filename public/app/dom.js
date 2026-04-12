@@ -67,3 +67,53 @@ export function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 }
+
+let confirmResolver = null;
+
+export function openConfirmModal({ title, message, confirmText = "Aceptar", cancelText = "Cancelar" }) {
+  const modal = document.getElementById("confirmModal");
+  const titleElement = document.getElementById("confirmModalTitle");
+  const messageElement = document.getElementById("confirmModalMessage");
+  const confirmButton = document.getElementById("confirmModalAcceptButton");
+  const cancelButton = document.getElementById("confirmModalCancelButton");
+
+  if (!modal || !titleElement || !messageElement || !confirmButton || !cancelButton) {
+    return Promise.resolve(window.confirm(message));
+  }
+
+  titleElement.textContent = title;
+  messageElement.textContent = message;
+  confirmButton.textContent = confirmText;
+  cancelButton.textContent = cancelText;
+  modal.classList.remove("hidden");
+
+  const cleanup = () => {
+    modal.classList.add("hidden");
+    confirmButton.onclick = null;
+    cancelButton.onclick = null;
+    if (confirmResolver) {
+      confirmResolver = null;
+    }
+  };
+
+  return new Promise((resolve) => {
+    confirmResolver = resolve;
+
+    confirmButton.onclick = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    cancelButton.onclick = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    modal.onclick = (event) => {
+      if (event.target === modal) {
+        cleanup();
+        resolve(false);
+      }
+    };
+  });
+}

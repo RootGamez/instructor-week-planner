@@ -1,6 +1,7 @@
 export const state = {
   weekLabel: "",
   activeWeekLabel: "",
+  activeWeekDate: null,
   isLocked: false,
   teachers: [],
   areas: [],
