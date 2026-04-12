@@ -11,6 +11,14 @@ import { ensureAdmin } from "./auth.js";
 import { requestSlotLock, releaseCurrentEditingLock } from "./realtime.js";
 import { resolveWeekDateFromLabel } from "./weekPicker.js";
 
+function normalizeToWeekStart(date) {
+  const baseDate = new Date(date);
+  baseDate.setHours(12, 0, 0, 0);
+  const day = (baseDate.getDay() + 6) % 7;
+  baseDate.setDate(baseDate.getDate() - day);
+  return baseDate;
+}
+
 export function syncLockButtonIcon() {
   const lockIcon = document.querySelector("#lockButton i");
   if (!lockIcon) return;
@@ -106,7 +114,9 @@ export async function loadBootstrap(weekLabel, weekDate) {
 
   state.weekLabel = data.weekLabel;
   state.activeWeekLabel = data.weekLabel;
-  state.activeWeekDate = weekDate || resolveWeekDateFromLabel(data.weekLabel) || new Date();
+  state.activeWeekDate = weekDate
+    ? normalizeToWeekStart(weekDate)
+    : resolveWeekDateFromLabel(data.weekLabel) || new Date();
   state.isLocked = data.isLocked;
   state.teachers = data.teachers;
   state.areas = data.areas;
@@ -202,7 +212,7 @@ export async function handleRegister() {
       showMessage("messageBox", "Horario registrado.", "success");
     }
 
-    await loadBootstrap(state.activeWeekLabel);
+    await loadBootstrap(state.activeWeekLabel, state.activeWeekDate);
     setTimeout(() => {
       const modal = document.getElementById("registrationModal");
       if (modal) modal.classList.add("hidden");

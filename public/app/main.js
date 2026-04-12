@@ -68,7 +68,7 @@ function wireEvents() {
   });
 
   try {
-    await loadBootstrap();
+    await handleCurrentWeek(loadBootstrap);
   } catch (error) {
     showGlobalMessage(`No se pudo cargar la app: ${error.message}`, "error");
   }

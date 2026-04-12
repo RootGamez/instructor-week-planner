@@ -40,6 +40,14 @@ function parseMonthName(monthName) {
   return MONTHS_ES.indexOf(normalized);
 }
 
+function normalizeToWeekStart(date) {
+  const baseDate = new Date(date);
+  baseDate.setHours(12, 0, 0, 0);
+  const day = (baseDate.getDay() + 6) % 7;
+  baseDate.setDate(baseDate.getDate() - day);
+  return baseDate;
+}
+
 export function resolveWeekDateFromLabel(weekLabel) {
   if (typeof weekLabel !== "string") return null;
 
@@ -51,9 +59,7 @@ export function resolveWeekDateFromLabel(weekLabel) {
     const year = fullMatch[5] ? Number(fullMatch[5]) : new Date().getFullYear();
     const monthIndex = parseMonthName(fullMatch[2]);
     if (monthIndex >= 0) {
-      const monday = new Date(year, monthIndex, Number(fullMatch[1]));
-      monday.setHours(12, 0, 0, 0);
-      return monday;
+      return normalizeToWeekStart(new Date(year, monthIndex, Number(fullMatch[1])));
     }
   }
 
@@ -64,9 +70,7 @@ export function resolveWeekDateFromLabel(weekLabel) {
     const year = legacyMatch[4] ? Number(legacyMatch[4]) : new Date().getFullYear();
     const monthIndex = parseMonthName(legacyMatch[3]);
     if (monthIndex >= 0) {
-      const monday = new Date(year, monthIndex, Number(legacyMatch[1]));
-      monday.setHours(12, 0, 0, 0);
-      return monday;
+      return normalizeToWeekStart(new Date(year, monthIndex, Number(legacyMatch[1])));
     }
   }
 
@@ -77,7 +81,7 @@ function shiftWeek(date, offsetWeeks) {
   const nextDate = new Date(date);
   nextDate.setDate(nextDate.getDate() + offsetWeeks * 7);
   nextDate.setHours(12, 0, 0, 0);
-  return nextDate;
+  return normalizeToWeekStart(nextDate);
 }
 
 function syncPickerSelection(date) {
@@ -104,8 +108,7 @@ export function initWeekPicker() {
     onChange: (selectedDates) => {
       if (!selectedDates || selectedDates.length === 0) return;
       const selectedDate = selectedDates[0];
-      state.activeWeekDate = new Date(selectedDate);
-      state.activeWeekDate.setHours(12, 0, 0, 0);
+      state.activeWeekDate = normalizeToWeekStart(selectedDate);
       state.pendingWeekLabel = formatWeekLabelFromDate(selectedDate);
       if (ui.selectedWeekPreview) {
         ui.selectedWeekPreview.textContent = state.pendingWeekLabel;
@@ -137,8 +140,7 @@ export async function handleNextWeek(loadBootstrap) {
 }
 
 export async function handleCurrentWeek(loadBootstrap) {
-  const today = new Date();
-  today.setHours(12, 0, 0, 0);
+  const today = normalizeToWeekStart(new Date());
   await loadBootstrap(formatWeekLabelFromDate(today), today);
 }
 
@@ -163,7 +165,7 @@ export async function handleUpdateSubtitle(loadBootstrap) {
       ? new Date(state.weekPicker.selectedDates[0])
       : resolveWeekDateFromLabel(weekLabel) || state.activeWeekDate || new Date();
 
-    await loadBootstrap(weekLabel, selectedDate);
+    await loadBootstrap(weekLabel, normalizeToWeekStart(selectedDate));
     showMessage("updateSubtitleMessageBox", "Semana seleccionada correctamente.", "success");
     setTimeout(() => {
       const modal = document.getElementById("updateSubtitleModal");
